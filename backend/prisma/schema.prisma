@@ -1,0 +1,32 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      String   @default("CUSTOMER") // "CUSTOMER" | "ADMIN"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Submission {
+  id           String    @id @default(uuid())
+  firstName    String
+  lastName     String
+  email        String    @unique
+  gender       String    // "MALE" | "FEMALE" | "OTHER"
+  mobileNumber String
+  address      String
+  feedback     String?
+  userCreated  String    // Creator email / ID
+  dateCreated  DateTime  @default(now())
+  userModified String?   // Admin email / ID who modified
+  dateModified DateTime?
+}

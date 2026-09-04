@@ -1,0 +1,21 @@
+{
+  "name": "fullstack-web-assignment",
+  "version": "1.0.0",
+  "description": "Full-Stack Web Application with JWT Auth, RBAC, Form Submission & Admin Management",
+  "scripts": {
+    "install:backend": "npm install --prefix backend",
+    "install:frontend": "npm install --prefix frontend",
+    "install:all": "npm run install:backend && npm run install:frontend",
+    "prisma:push": "npm run prisma:push --prefix backend",
+    "seed": "npm run seed --prefix backend",
+    "setup": "npm run install:all && npm run prisma:push && npm run seed",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "test": "npm run test --prefix backend",
+    "build:frontend": "npm run build --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
