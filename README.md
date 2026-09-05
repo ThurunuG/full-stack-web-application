@@ -1,6 +1,6 @@
 # Full-Stack Web Application (Auth, RBAC & Submissions Management)
 
-A full-stack web application built to fulfill the **Full-Stack Software Developer Technical Assignment**. It includes robust JWT-based authentication, role-based access control (RBAC), customer form submissions with validation and audit logging, and an admin management dashboard with CRUD, live search, and gender filtering.
+A full-stack web application designed with a secure and scalable architecture, featuring JWT-based authentication, role-based access control (RBAC), server-side data validation, and audit logging. The application enables customers to submit and manage forms while providing administrators with a comprehensive dashboard for CRUD operations, live search, gender-based filtering, and user management. Built with a focus on security, maintainability, responsive UI, and clean API design.
 
 ---
 
