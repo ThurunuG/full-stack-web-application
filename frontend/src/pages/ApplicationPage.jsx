@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import {
@@ -7,17 +7,15 @@ import {
   Mail,
   Phone,
   MapPin,
-  MessageSquare,
   Send,
   AlertCircle,
   CheckCircle2,
   Clock,
   Sparkles,
-  ChevronRight,
 } from 'lucide-react';
 
 const ApplicationPage = () => {
-  const { user } = useAuth();
+  useAuth();
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -37,6 +35,7 @@ const ApplicationPage = () => {
   const [mySubmissions, setMySubmissions] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
 
+  // Load the current customer's applications for the history panel.
   const fetchMySubmissions = async () => {
     try {
       setLoadingHistory(true);
@@ -53,6 +52,7 @@ const ApplicationPage = () => {
     fetchMySubmissions();
   }, []);
 
+  // Keep every form field controlled by the component state.
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -60,6 +60,7 @@ const ApplicationPage = () => {
     }));
   };
 
+  // Submit the application, then clear the form and refresh its history.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);

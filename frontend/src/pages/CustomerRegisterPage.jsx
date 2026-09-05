@@ -15,6 +15,7 @@ const CustomerRegisterPage = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
+  // Keep each form field in sync with its corresponding input.
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -26,7 +27,7 @@ const CustomerRegisterPage = () => {
     e.preventDefault();
     setError(null);
 
-    // Client-side quick checks
+    // Validate the password before sending the registration request.
     if (formData.password.length < 4) {
       setError('Password must be at least 4 characters long.');
       return;
@@ -40,8 +41,11 @@ const CustomerRegisterPage = () => {
     setLoading(true);
 
     try {
+      // Submit the customer registration details to the API.
       const res = await api.post('/auth/register', formData);
       setSuccess(true);
+
+      // Give the user time to read the success message before redirecting.
       setTimeout(() => {
         navigate('/login', {
           state: { message: 'Registration successful! Please log in.' },

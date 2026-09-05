@@ -5,6 +5,7 @@ import api from '../services/api';
 import { LogIn, Mail, Lock, AlertCircle, Shield, ArrowRight } from 'lucide-react';
 
 const CustomerLoginPage = () => {
+  // Keep navigation and authentication concerns in the page component.
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
@@ -17,9 +18,11 @@ const CustomerLoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Display a one-time message passed from the registration page.
   const registeredNotice = location.state?.message;
 
   const handleChange = (e) => {
+    // Update only the field being edited while preserving the other value.
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -32,15 +35,17 @@ const CustomerLoginPage = () => {
     setLoading(true);
 
     try {
+      // Authenticate the customer and save the returned session credentials.
       const res = await api.post('/auth/customer/login', formData);
       const { accessToken, refreshToken, user } = res.data;
 
-      // Store in auth context and localStorage
+      // Store the authenticated user in the auth context and localStorage.
       login(accessToken, refreshToken, user);
 
-      // Redirect to Application Page as specified in assignment requirements
+      // Send authenticated customers to the application portal.
       navigate('/apply');
     } catch (err) {
+      // Prefer the API error message, with a safe fallback for network errors.
       console.error('Login error:', err);
       setError(
         err.response?.data?.message || 'Failed to log in. Please check your credentials.'
@@ -113,7 +118,7 @@ const CustomerLoginPage = () => {
             </div>
           </div>
 
-          {/* Quick Demo Fill button */}
+          {/* Populate the form with the demo customer's credentials. */}
           <button
             type="button"
             onClick={() =>

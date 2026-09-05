@@ -1,6 +1,6 @@
 const { body, validationResult } = require('express-validator');
 
-// Middleware to handle validation errors
+// Collect validation errors and return a consistent API response.
 const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -16,7 +16,7 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-// Customer Registration Validation
+// Validate the required fields for customer registration.
 const validateRegister = [
   body('email')
     .trim()
@@ -42,7 +42,7 @@ const validateRegister = [
   handleValidationErrors,
 ];
 
-// Login Validation (common format check)
+// Validate login credentials and email format.
 const validateLogin = [
   body('email')
     .trim()
@@ -55,7 +55,7 @@ const validateLogin = [
   handleValidationErrors,
 ];
 
-// Admin Creation Validation
+// Validate the email required to create an administrator.
 const validateCreateAdmin = [
   body('email')
     .trim()
@@ -67,7 +67,7 @@ const validateCreateAdmin = [
   handleValidationErrors,
 ];
 
-// Form Submission Creation Validation
+// Validate all required fields when creating a form submission.
 const validateSubmissionCreate = [
   body('firstName').trim().notEmpty().withMessage('First name is required and cannot be empty'),
   body('lastName').trim().notEmpty().withMessage('Last name is required and cannot be empty'),
@@ -96,7 +96,7 @@ const validateSubmissionCreate = [
   handleValidationErrors,
 ];
 
-// Form Submission Update Validation
+// Validate optional fields when updating a form submission.
 const validateSubmissionUpdate = [
   body('firstName')
     .optional()

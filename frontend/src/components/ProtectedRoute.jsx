@@ -7,6 +7,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
+  // Wait for the authentication state before deciding whether access is allowed.
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -18,12 +19,14 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     );
   }
 
+  // Preserve the requested location so the user can be redirected back after login.
   if (!user) {
     // If target is admin route, redirect to admin login, otherwise customer login
     const isTargetAdmin = allowedRoles?.includes('ADMIN');
     return <Navigate to={isTargetAdmin ? '/admin/login' : '/login'} state={{ from: location }} replace />;
   }
 
+  // Prevent authenticated users from viewing routes outside their assigned role.
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4">

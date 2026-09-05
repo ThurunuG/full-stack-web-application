@@ -13,15 +13,18 @@ import {
 } from 'lucide-react';
 
 const Navbar = () => {
+  // Read the current user and role flags to render the appropriate navigation options.
   const { user, logout, isCustomer, isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Clear the session before returning the user to the home page.
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
+  // Highlight the link that matches the current route.
   const isActive = (path) => location.pathname === path;
 
   return (
@@ -87,6 +90,7 @@ const Navbar = () => {
 
           {/* User Auth Section */}
           <div className="flex items-center gap-3">
+            {/* Show account details and logout for authenticated users. */}
             {user ? (
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs">
@@ -119,6 +123,7 @@ const Navbar = () => {
                 </button>
               </div>
             ) : (
+              /* Otherwise, provide customer and administrator entry points. */
               <div className="flex items-center gap-2">
                 <Link
                   to="/login"

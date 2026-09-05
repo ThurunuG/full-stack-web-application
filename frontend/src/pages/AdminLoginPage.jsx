@@ -8,6 +8,7 @@ const AdminLoginPage = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  // Keep the login fields together so they can be updated from one handler.
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -17,6 +18,7 @@ const AdminLoginPage = () => {
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
+    // Update only the field that the user is currently editing.
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -29,15 +31,15 @@ const AdminLoginPage = () => {
     setLoading(true);
 
     try {
+      // Authenticate the administrator through the admin-only endpoint.
       const res = await api.post('/auth/admin/login', formData);
       const { accessToken, refreshToken, user } = res.data;
 
-      // Store in auth context and localStorage
+      // Store the session in the auth context and redirect to the dashboard.
       login(accessToken, refreshToken, user);
-
-      // Redirect to Admin Dashboard
       navigate('/admin/dashboard');
     } catch (err) {
+      // Show the API error when available, otherwise use a safe fallback message.
       console.error('Admin login error:', err);
       setError(
         err.response?.data?.message || 'Failed to authenticate admin credentials.'
@@ -104,7 +106,7 @@ const AdminLoginPage = () => {
             </div>
           </div>
 
-          {/* Quick Demo Fill button */}
+          {/* Populate the demo credentials for local or presentation use. */}
           <button
             type="button"
             onClick={() =>

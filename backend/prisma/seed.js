@@ -1,20 +1,21 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 
+// Create a Prisma client for database operations during seeding.
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('Seeding database...');
 
-  // Clean existing data for clean seed
+  // Remove existing records so the seed can be run repeatedly.
   await prisma.submission.deleteMany({});
   await prisma.user.deleteMany({});
 
-  // Hash passwords
+  // Store only hashed passwords for the seeded accounts.
   const adminPasswordHash = await bcrypt.hash('Admin@12345', 10);
   const customerPasswordHash = await bcrypt.hash('Customer@123', 10);
 
-  // Seed Super Admin
+  // Create the administrator account.
   const admin = await prisma.user.create({
     data: {
       email: 'admin@evotec.software',
@@ -24,7 +25,7 @@ async function main() {
   });
   console.log('Created Admin:', admin.email);
 
-  // Seed Sample Customer
+  // Create a sample customer account for the submissions below.
   const customer = await prisma.user.create({
     data: {
       email: 'customer@example.com',
@@ -34,7 +35,7 @@ async function main() {
   });
   console.log('Created Customer:', customer.email);
 
-  // Seed Sample Submissions
+  // Prepare sample feedback submissions with dates spread across recent days.
   const submissions = [
     {
       firstName: 'Alice',
@@ -93,6 +94,7 @@ async function main() {
     },
   ];
 
+  // Insert each submission into the database.
   for (const sub of submissions) {
     await prisma.submission.create({ data: sub });
   }
@@ -102,9 +104,11 @@ async function main() {
 
 main()
   .catch((e) => {
+    // Log the error and return a failure exit code if seeding fails.
     console.error('Seed error:', e);
     process.exit(1);
   })
   .finally(async () => {
+    // Always close the database connection when seeding is complete.
     await prisma.$disconnect();
   });

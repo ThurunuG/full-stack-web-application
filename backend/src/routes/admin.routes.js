@@ -4,13 +4,13 @@ const { createAdmin, getAllAdmins } = require('../controllers/admin.controller')
 const { authenticateToken, requireRole } = require('../middleware/auth.middleware');
 const { validateCreateAdmin } = require('../middleware/validate.middleware');
 
-// All routes here require ADMIN role
+// Apply authentication and authorization to every admin route.
 router.use(authenticateToken, requireRole('ADMIN'));
 
-// Create new admin (auto-generates random password and returns it)
+// Create a new admin with a generated password.
 router.post('/create', validateCreateAdmin, createAdmin);
 
-// Get list of existing admins
+// Return all existing administrator accounts.
 router.get('/list', getAllAdmins);
 
 module.exports = router;

@@ -8,7 +8,7 @@ const createSubmission = async (req, res) => {
   try {
     const { firstName, lastName, email, gender, mobileNumber, address, feedback } = req.body;
 
-    // Check if email already exists in submissions
+    // Normalize the email before checking uniqueness so casing cannot create duplicates.
     const existingSubmission = await prisma.submission.findUnique({
       where: { email: email.toLowerCase() },
     });
@@ -20,7 +20,7 @@ const createSubmission = async (req, res) => {
       });
     }
 
-    // Create submission record with audit fields
+    // Trim user-entered values and store audit information for traceability.
     const submission = await prisma.submission.create({
       data: {
         firstName: firstName.trim(),
@@ -82,12 +82,12 @@ const getAllSubmissions = async (req, res) => {
 
     const where = {};
 
-    // Filter by gender if provided
+    // Apply the gender filter only when the client selects a specific gender.
     if (gender && gender !== 'ALL') {
       where.gender = gender.toUpperCase();
     }
 
-    // Search by first name or last name (case-insensitive partial match)
+    // Search across the supported fields using partial text matching.
     if (search && search.trim() !== '') {
       const query = search.trim();
       where.OR = [
@@ -102,7 +102,7 @@ const getAllSubmissions = async (req, res) => {
       orderBy: { dateCreated: 'desc' },
     });
 
-    // Provide quick counts for admin overview metrics
+    // Return aggregate counts for the administrator dashboard.
     const totalCount = await prisma.submission.count();
     const maleCount = await prisma.submission.count({ where: { gender: 'MALE' } });
     const femaleCount = await prisma.submission.count({ where: { gender: 'FEMALE' } });
@@ -136,7 +136,7 @@ const updateSubmission = async (req, res) => {
     const { id } = req.params;
     const { firstName, lastName, email, gender, mobileNumber, address, feedback } = req.body;
 
-    // Verify submission exists
+    // Confirm the record exists before attempting validation or updates.
     const existingSubmission = await prisma.submission.findUnique({
       where: { id },
     });
@@ -148,7 +148,7 @@ const updateSubmission = async (req, res) => {
       });
     }
 
-    // If updating email, ensure it's not taken by another submission
+    // Prevent an email change from conflicting with another submission.
     if (email && email.toLowerCase() !== existingSubmission.email.toLowerCase()) {
       const emailConflict = await prisma.submission.findUnique({
         where: { email: email.toLowerCase() },

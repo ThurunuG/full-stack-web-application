@@ -3,6 +3,7 @@ import api from '../services/api';
 import { X, ShieldPlus, Copy, Check, AlertCircle } from 'lucide-react';
 
 const CreateAdminModal = ({ isOpen, onClose, onSuccess }) => {
+  // Track the form, request status, and generated credentials shown to the user.
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -13,6 +14,7 @@ const CreateAdminModal = ({ isOpen, onClose, onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Prevent duplicate submissions while the admin account is being created.
     setLoading(true);
     setError(null);
 
@@ -32,6 +34,7 @@ const CreateAdminModal = ({ isOpen, onClose, onSuccess }) => {
   };
 
   const handleCopy = () => {
+    // Copy the one-time password so it can be shared securely with the new admin.
     if (createdResult?.password) {
       navigator.clipboard.writeText(createdResult.password);
       setCopied(true);
@@ -40,6 +43,7 @@ const CreateAdminModal = ({ isOpen, onClose, onSuccess }) => {
   };
 
   const handleClose = () => {
+    // Reset the modal state before closing so it starts fresh next time.
     setEmail('');
     setError(null);
     setCreatedResult(null);

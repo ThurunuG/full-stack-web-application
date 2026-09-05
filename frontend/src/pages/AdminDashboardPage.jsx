@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../services/api';
-import { useAuth } from '../context/AuthContext';
 import EditSubmissionModal from '../components/EditSubmissionModal';
 import CreateAdminModal from '../components/CreateAdminModal';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
@@ -19,18 +18,17 @@ import {
 } from 'lucide-react';
 
 const AdminDashboardPage = () => {
-  const { user } = useAuth();
-
+  // Submission data and aggregate counts displayed by the dashboard.
   const [submissions, setSubmissions] = useState([]);
   const [stats, setStats] = useState({ total: 0, male: 0, female: 0, other: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Filters & Search
+  // Filters are sent to the API whenever the user changes the search criteria.
   const [searchTerm, setSearchTerm] = useState('');
   const [genderFilter, setGenderFilter] = useState('ALL');
 
-  // Modals state
+  // Track the selected record and the modal currently being used.
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isCreateAdminOpen, setIsCreateAdminOpen] = useState(false);
@@ -38,7 +36,7 @@ const AdminDashboardPage = () => {
   const [submissionToDelete, setSubmissionToDelete] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  // Fetch all submissions with optional search & filter
+  // Fetch submissions using the current search and gender filters.
   const fetchSubmissions = async () => {
     setLoading(true);
     setError(null);

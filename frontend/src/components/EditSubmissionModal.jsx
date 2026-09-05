@@ -18,6 +18,7 @@ const EditSubmissionModal = ({ isOpen, onClose, submission, onSuccess }) => {
   const [successMsg, setSuccessMsg] = useState('');
 
   useEffect(() => {
+    // Populate the form whenever a different submission is selected.
     if (submission) {
       setFormData({
         firstName: submission.firstName || '',
@@ -36,6 +37,7 @@ const EditSubmissionModal = ({ isOpen, onClose, submission, onSuccess }) => {
   if (!isOpen || !submission) return null;
 
   const handleChange = (e) => {
+    // Keep all form fields synchronized with their corresponding input.
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -44,6 +46,7 @@ const EditSubmissionModal = ({ isOpen, onClose, submission, onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Submit the edited values and show feedback while the request is pending.
     setLoading(true);
     setError(null);
     setSuccessMsg('');
@@ -51,6 +54,7 @@ const EditSubmissionModal = ({ isOpen, onClose, submission, onSuccess }) => {
     try {
       const res = await api.put(`/submissions/${submission.id}`, formData);
       setSuccessMsg('Submission updated successfully!');
+      // Give the user time to see the success message before closing the modal.
       setTimeout(() => {
         onSuccess(res.data.submission);
         onClose();

@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
+  // Keep the current user and storage-hydration status in context state.
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -23,6 +24,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (accessToken, refreshToken, userData) => {
+    // Persist the session so it survives page reloads.
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
     localStorage.setItem('user', JSON.stringify(userData));
@@ -30,12 +32,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    // Clear persisted credentials and reset the authenticated user.
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
     setUser(null);
   };
 
+  // Provide role-based access checks to consuming components.
   const isCustomer = user?.role === 'CUSTOMER';
   const isAdmin = user?.role === 'ADMIN';
 

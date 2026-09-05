@@ -2,9 +2,11 @@ import React from 'react';
 import { Trash2, AlertTriangle, X } from 'lucide-react';
 
 const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, title, message, loading }) => {
+  // Keep the modal out of the DOM when it is not needed.
   if (!isOpen) return null;
 
   return (
+    // Overlay the current page with a confirmation dialog.
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
       <div className="bg-white rounded-2xl max-w-sm w-full shadow-2xl border border-slate-100 overflow-hidden">
         <div className="p-6 text-center">
@@ -18,6 +20,7 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, title, message, loadin
             {message || 'Are you sure you want to delete this submission? This action cannot be undone.'}
           </p>
           <div className="flex items-center justify-center gap-3">
+            {/* Prevent cancellation while the delete request is in progress. */}
             <button
               type="button"
               disabled={loading}
@@ -26,6 +29,7 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, title, message, loadin
             >
               Cancel
             </button>
+            {/* Submit the deletion and show progress feedback when loading. */}
             <button
               type="button"
               disabled={loading}

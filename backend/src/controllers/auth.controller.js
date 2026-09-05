@@ -13,7 +13,7 @@ const registerCustomer = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user already exists
+    // Prevent duplicate accounts by checking the normalized email address.
     const existingUser = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
     });
@@ -25,10 +25,10 @@ const registerCustomer = async (req, res) => {
       });
     }
 
-    // Hash password
+    // Never store a customer's plain-text password in the database.
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user with CUSTOMER role
+    // Create the account with the only role allowed through customer registration.
     const newUser = await prisma.user.create({
       data: {
         email: email.toLowerCase(),
@@ -65,7 +65,7 @@ const loginCustomer = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user
+    // Look up the account using the same normalized email format as registration.
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
     });
@@ -77,7 +77,7 @@ const loginCustomer = async (req, res) => {
       });
     }
 
-    // Verify role is CUSTOMER
+    // Ensure this customer endpoint cannot be used by administrative accounts.
     if (user.role !== 'CUSTOMER') {
       return res.status(403).json({
         success: false,
@@ -85,7 +85,7 @@ const loginCustomer = async (req, res) => {
       });
     }
 
-    // Check password
+    // Compare the submitted password with the stored hash.
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({
@@ -94,7 +94,7 @@ const loginCustomer = async (req, res) => {
       });
     }
 
-    // Generate tokens
+    // Issue short-lived access and longer-lived refresh credentials.
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
@@ -126,7 +126,7 @@ const loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user
+    // Find the administrator by normalized email address.
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
     });
@@ -138,7 +138,7 @@ const loginAdmin = async (req, res) => {
       });
     }
 
-    // Verify role is ADMIN
+    // Restrict this endpoint to accounts with administrative privileges.
     if (user.role !== 'ADMIN') {
       return res.status(403).json({
         success: false,
@@ -146,7 +146,7 @@ const loginAdmin = async (req, res) => {
       });
     }
 
-    // Check password
+    // Validate the password against its stored hash.
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({
@@ -155,7 +155,7 @@ const loginAdmin = async (req, res) => {
       });
     }
 
-    // Generate tokens
+    // Issue tokens after both identity and role checks succeed.
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
@@ -186,6 +186,7 @@ const refreshToken = async (req, res) => {
   try {
     const { refreshToken: token } = req.body;
 
+    // A refresh token is required to request a new access token.
     if (!token) {
       return res.status(400).json({
         success: false,
@@ -193,6 +194,7 @@ const refreshToken = async (req, res) => {
       });
     }
 
+    // Verify the token signature and expiration before using its claims.
     let decoded;
     try {
       decoded = verifyRefreshToken(token);
@@ -203,7 +205,7 @@ const refreshToken = async (req, res) => {
       });
     }
 
-    // Verify user still exists in database
+    // Do not issue tokens for accounts that have been deleted.
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
     });
@@ -215,7 +217,7 @@ const refreshToken = async (req, res) => {
       });
     }
 
-    // Issue new access token
+    // Refresh only the access token; the existing refresh token remains unchanged.
     const newAccessToken = generateAccessToken(user);
 
     return res.status(200).json({

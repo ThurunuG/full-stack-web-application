@@ -9,6 +9,7 @@ let adminToken = '';
 let adminRefreshToken = '';
 let testSubmissionId = '';
 
+// Prepare a clean database and seed the administrator used by protected-route tests.
 beforeAll(async () => {
   // Clear any existing test records
   await prisma.submission.deleteMany({});
@@ -26,9 +27,11 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  // Close Prisma so the test process can exit cleanly.
   await prisma.$disconnect();
 });
 
+// Verify that the API is running before exercising application features.
 describe('1. Health Check Endpoint', () => {
   it('GET /api/health should return 200 OK and health status', async () => {
     const res = await request(app).get('/api/health');
@@ -37,6 +40,7 @@ describe('1. Health Check Endpoint', () => {
   });
 });
 
+// Cover registration, role-specific login, and token refresh behavior.
 describe('2. Authentication & Authorization Flow', () => {
   it('POST /api/auth/register should fail on validation error (short password)', async () => {
     const res = await request(app).post('/api/auth/register').send({
@@ -139,6 +143,7 @@ describe('2. Authentication & Authorization Flow', () => {
   });
 });
 
+// Ensure only authenticated administrators can create other administrators.
 describe('3. Admin Creation (Protected Route)', () => {
   it('POST /api/admin/create should be rejected without auth token', async () => {
     const res = await request(app).post('/api/admin/create').send({
@@ -173,6 +178,7 @@ describe('3. Admin Creation (Protected Route)', () => {
   });
 });
 
+// Validate customer access, request validation, creation, and duplicate handling.
 describe('4. Form Submission (Customer Protected Route)', () => {
   it('POST /api/submissions should fail without token', async () => {
     const res = await request(app).post('/api/submissions').send({
@@ -266,9 +272,10 @@ describe('4. Form Submission (Customer Protected Route)', () => {
   });
 });
 
+// Exercise administrator listing, filtering, searching, updating, and deletion.
 describe('5. Admin Dashboard CRUD, Filtering, and Search', () => {
   beforeAll(async () => {
-    // Add a second submission with MALE gender to test filtering and search
+    // Add a second submission with MALE gender to test filtering and search.
     await prisma.submission.create({
       data: {
         firstName: 'Robert',
