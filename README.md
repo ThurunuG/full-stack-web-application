@@ -379,5 +379,5 @@ It includes environment variables for `baseUrl`, `customerToken`, `adminToken`, 
 
 ## 📄 Submission
 
-- **GitHub Repository**: Link to this repository.
+- **GitHub Repository**: https://github.com/ThurunuG/full-stack-web-application
 - **Submission Email**: `contact@evotec.software`
